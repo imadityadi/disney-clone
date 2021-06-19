@@ -1,14 +1,46 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
 import styled from "styled-components";
+import {useParams} from 'react-router-dom'
+import db from '../firebase'
+
 
 function Detail() {
+  const { id } = useParams();
+  const [movie, setMovie] = useState()
+  console.log(movie)
+  useEffect(() => {
+    
+    // Grab movie info from DB
+
+    db.collection('movies')
+    .doc(id)
+    .get()
+    .then((doc) => {
+      if(doc.exists){        
+        //save movie data
+
+        setMovie(doc.data());
+      }else{
+        // redirect to homepage
+      }
+    })
+  }, [])
+
+
+
+
+
+  
+  
   return (
     <Container>
-      <Background>
-        <img src="https://wallpapercave.com/wp/wp3703291.jpg" />
+     {movie && 
+     <>
+       <Background>
+        <img src= {movie.backgroundImg} />
       </Background>
       <ImageTitle>
-        <img src="http://pngimg.com/uploads/ironman/ironman_PNG79.png" />
+        <img src= {movie.titleImg} />
       </ImageTitle>
       <Controls>
         <PlayButton>
@@ -27,13 +59,21 @@ function Detail() {
         </GroupWatchButton>
       </Controls>
       <SubTitle>
-        aditya singh coding at 11
+        {movie.subTitle}
 
       </SubTitle>
       <Description>
-
-        usual thing undefined
+        {movie.description}
       </Description>
+
+     </>
+     
+     
+     
+     
+     }
+     
+     
 
     </Container>
   )

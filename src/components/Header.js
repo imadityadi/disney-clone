@@ -1,12 +1,76 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 import styled from 'styled-components'
+import {useSelector, useDispatch} from  'react-redux'
+import {useHistory} from 'react-router-dom'
+import {
+    selectUserPhoto,
+    selectUserName,
+    setUserLogin,
+    setSignOut
+
+} from '../features/user/userSlice'
+import {auth, provider} from '../firebase'
+
 
 function Header() {
+    const userName = useSelector(selectUserName);
+    const userPhoto = useSelector(selectUserPhoto);
+    const dispatch = useDispatch();
+    const history = useHistory();
+
+
+    useEffect(() => {
+       auth.onAuthStateChanged(async (user) => {
+           if(user){
+            dispatch(setUserLogin({
+                name: user.displayName,
+                email: user.email,
+                photo: user.photoURL
+            }))
+            history.push('/')
+           }
+       })
+    }, [])
+
+
+
+    const signIn = () => {
+        auth.signInWithPopup(provider)
+
+        .then((result)=> {
+            let user = result.user
+            dispatch(setUserLogin({
+                name: user.displayName,
+                email: user.email,
+                photo: user.photoURL
+            }))
+            history.push('/')
+        } )
+
+    }
+
+    const signOut = () => {
+        auth.signOut()
+        .then(() => {
+            dispatch(setSignOut());
+            history.push('/login')
+        })
+    }
+
+
     return (
         <Nav>
             <Logo src="/images/logo.svg"/>
+            { !userName? (
+                <LoginContainer>
+                    <Login onClick={signIn}>Login</Login>
+
+                </LoginContainer>
+            ):
+
+            <>
                 <NavMenu>
-                    <a>
+                    <a> 
                         <img src = "/images/home-icon.svg"/>
                         <span>HOME</span>
                     </a>
@@ -31,7 +95,15 @@ function Header() {
                         <span>SERIES</span>
                     </a>
                 </NavMenu>
-                <UserImg src="https://randomuser.me/api/portraits/men/2.jpg"/>
+                <UserImg 
+                onClick={signOut}
+                src="https://randomuser.me/api/portraits/men/2.jpg"/>
+            
+            </>
+                
+            
+            }
+                
 
            
         </Nav>
@@ -107,5 +179,29 @@ const UserImg = styled.img`
         height: 48px;
         border-radius: 50%;
         cursor: pointer;
+
+`
+
+const Login = styled.div`
+    border: 1px solid #f9f9f9;
+    padding: 8px 16px;
+    border-radius: 4px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    background-color: rgba(0,0,0,0.6);
+
+    &:hover {
+        background-color: #f9f9f9;
+        color: #000;
+        border-color: transparent;
+        cursor: pointer;
+    }
+
+`
+
+const LoginContainer = styled.div`
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
 
 `
