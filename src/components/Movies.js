@@ -1,35 +1,28 @@
 import React from 'react'
 import styled from 'styled-components'
+import {selectMovies} from '../features/movie/movieSlice'
+import {useSelector} from 'react-redux'
 
 function Movies() {
+    const movies = useSelector(selectMovies);
+
+    console.log("this is movies", movies)
     return (
+        
+
         <Container>
+            
             <h4>Recommended For You</h4>
             <Content>
-                <Wrap>
-                    <img src = "https://c4.wallpaperflare.com/wallpaper/661/59/791/black-widow-avengers-age-of-ultron-marvel-cinematic-universe-artwork-wallpaper-preview.jpg" />
-                </Wrap>
-                <Wrap>
-                    <img src = "https://thedirect.s3.amazonaws.com/media/article_full/lokspos.jpg" />
-                </Wrap>
-                <Wrap>
-                    <img src = "https://m.media-amazon.com/images/M/MV5BNGJhZjdiZGQtYTAwMC00ZWFjLTgwODUtNjE2ZDY4Y2ZiYzJiXkEyXkFqcGdeQXVyODQwMDcwNDY@._V1_.jpg" />
-                </Wrap>
-                <Wrap>
-                    <img src = "https://reelifereviews.files.wordpress.com/2021/03/wandavision-1.jpeg?w=1024" />
-                </Wrap>
-                <Wrap>
-                    <img src = "https://static0.srcdn.com/wordpress/wp-content/uploads/2021/02/Falcon-Winter-Soldier-Poster-.jpg?q=50&fit=crop&w=767&h=450&dpr=1.5" />
-                </Wrap>
-                <Wrap>
-                    <img src = "https://i.ytimg.com/vi/i_IcWXsaxkM/maxresdefault.jpg" />
-                </Wrap>
-                <Wrap>
-                    <img src = "https://i.pinimg.com/originals/77/d6/48/77d648bb7ea7ca11495d3fc5fab23412.jpg" />
-                </Wrap>
-                <Wrap>
-                    <img src = "https://bingeddata.s3.amazonaws.com/uploads/2021/03/New-Disney-Nat-Geo-Show-Earth-Moods-Will-Lull-You-Into-Calming-Tranquility-1.jpg" />
-                </Wrap>
+                { movies &&
+                     movies.map((movie) =>(
+
+                        <Wrap key={movie.id}>
+                        <img src = {movie.cardImg} />
+                        </Wrap>
+
+                     ))
+                }
             </Content>
         </Container>
     )
